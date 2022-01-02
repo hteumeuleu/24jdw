@@ -2,6 +2,22 @@
 include_once('functions-wp-crap.php');
 
 /**
+ * Ajoute les styles du thème
+ */
+function jdw_theme_styles() {
+	wp_register_style(
+		'styles',
+		get_bloginfo('stylesheet_url'),
+		array(),
+		'9.0.2',
+		'all'
+	);
+	
+	wp_enqueue_style('styles');
+}
+add_action( 'wp_enqueue_scripts', 'jdw_theme_styles' );
+
+/**
  * Ajoute le support d'iframe dans le contenu d'articles
  */
 function jdw_add_iframe($initArray) {
@@ -33,8 +49,22 @@ function jdw_embed_handler_gist($matches, $attr, $url, $rawattr) {
  */
 function jdw_add_prism() {
 	if(is_single() || is_page()) {
-		wp_register_style('prismCSS', get_stylesheet_directory_uri().'/css/prism.css');
-		wp_register_script('prismJS', get_stylesheet_directory_uri().'/js/prism.js');
+		wp_register_style(
+			'prismCSS',
+			get_stylesheet_directory_uri().'/css/prism.css',
+			array(),
+			'1.25.0.20211204',
+			'all'
+		);
+
+		wp_register_script(
+			'prismJS',
+			get_stylesheet_directory_uri().'/js/prism.js',
+			array(),
+			'1.25.0.20211204',
+			false
+		);
+
 		wp_enqueue_style('prismCSS');
 		wp_enqueue_script('prismJS');
 	}
@@ -166,7 +196,13 @@ function jdw_the_logo() {
 	if($year >= 2018) {
 		$extension = '.svg';
 	}
-	$logo = '<img src="'.get_bloginfo('template_url').'/images/header/'.$year.'/logo'.$extension.'" width="160" height="60" alt="'.get_bloginfo('name').'" title="" />';
+	$filename = 'logo';
+	if(is_singular() && $year == 2021) {
+		$filename = 'logo-alt';
+	}
+
+	$logo = '<img src="'.get_bloginfo('template_url').'/images/header/'.$year.'/'.$filename.$extension.'" width="160" height="60" alt="'.get_bloginfo('name').'" title="" />';
+
 	echo $logo;
 }
 
@@ -191,7 +227,9 @@ function jdw_the_illustrator() {
 function jdw_the_illustrator_name() {
 	$year = jdw_get_the_year();
 
-	if($year == '2020') {
+	if($year == '2021') {
+		echo '<a href="https://sara-h.ch/">Sara Hernandez</a>';
+	} elseif($year == '2020') {
 		echo '<a href="https://www.instagram.com/maela_cosson/">Ma&euml;la Cosson</a>';
 	} elseif($year == '2019') {
 		echo '<a href="https://www.redisdead.net/">Laurence Vagner</a>';
@@ -238,7 +276,7 @@ function jdw_next_post_link() {
  * Récupère l'édition en cours
  */
 function jdw_get_the_edition() {
-	return 2020;
+	return 2021;
 }
 
 /**
